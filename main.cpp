@@ -17,7 +17,7 @@ std::vector<int> sortedValues;
 constexpr int lowestRandomNumber = 1;
 constexpr int highestRandomNumber = 100;
 
-auto getNumberOfElements() -> int
+auto getNumberOfElementsFromUser() -> int
 {
     int n = 0;
     std::cout << "Number of elements to sort" << std::endl;
@@ -61,6 +61,12 @@ auto waitForThreadsToFinish() -> void
     }
 }
 
+auto timesort() -> void
+{
+    createThreads();
+    waitForThreadsToFinish();
+}
+
 auto printVector(std::vector<int> vector) -> void
 {
     for (int& value : vector) {
@@ -70,10 +76,9 @@ auto printVector(std::vector<int> vector) -> void
 
 auto main() -> int
 {
-    int numberOfElements = getNumberOfElements();
+    int numberOfElements = getNumberOfElementsFromUser();
     createRandomValues(numberOfElements);
-    createThreads();
-    waitForThreadsToFinish();
+    timesort();
     printVector(sortedValues);
     return 0;
 }
