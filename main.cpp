@@ -4,15 +4,11 @@
  * @created     : Wednesday Aug 19, 2020 11:04:24 CEST
  */
 
-#include <chrono>
 #include <iostream>
 #include <random>
-#include <thread>
 #include <vector>
 
-std::vector<int> values;
-std::vector<std::thread> threadList;
-std::vector<int> sortedValues;
+#include "timesort.hpp"
 
 constexpr int lowestRandomNumber = 1;
 constexpr int highestRandomNumber = 100;
@@ -25,7 +21,7 @@ auto getNumberOfElementsFromUser() -> int
     return n;
 }
 
-auto generateRandomValue(int lowerBoundary, int upperBoundary) -> int
+auto generateRandomValue(const int lowerBoundary, const int upperBoundary) -> int
 {
     std::random_device rd;
     std::mt19937 mt(rd());
@@ -34,37 +30,16 @@ auto generateRandomValue(int lowerBoundary, int upperBoundary) -> int
     return dist(mt);
 }
 
-auto createRandomValues(int numberOfElements) -> void
+auto createRandomValues(int numberOfElements) -> std::vector<int>
 {
+    std::vector<int> values;
+
     for (int i = 0; i < numberOfElements; i++) {
         int randomValue = generateRandomValue(lowestRandomNumber, highestRandomNumber);
         values.emplace_back(randomValue);
     }
-}
 
-auto sort = [](int milliseconds) -> void {
-    std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
-    sortedValues.emplace_back(milliseconds);
-};
-
-auto createThreads() -> void
-{
-    for (int& milliseconds : values) {
-        threadList.emplace_back(std::thread(sort, milliseconds));
-    }
-}
-
-auto waitForThreadsToFinish() -> void
-{
-    for (std::thread& t : threadList) {
-        t.join();
-    }
-}
-
-auto timesort() -> void
-{
-    createThreads();
-    waitForThreadsToFinish();
+    return values;
 }
 
 auto printVector(std::vector<int> vector) -> void
@@ -76,9 +51,14 @@ auto printVector(std::vector<int> vector) -> void
 
 auto main() -> int
 {
-    int numberOfElements = getNumberOfElementsFromUser();
-    createRandomValues(numberOfElements);
-    timesort();
+    int numberOfElements;
+    std::vector<int> randomValues;
+    std::vector<int> sortedValues;
+
+    numberOfElements = getNumberOfElementsFromUser();
+    randomValues = createRandomValues(numberOfElements);
+    sortedValues = timesort::sort(randomValues);
+
     printVector(sortedValues);
     return 0;
 }
